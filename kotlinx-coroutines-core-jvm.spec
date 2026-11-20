@@ -1,11 +1,11 @@
 Name:		kotlinx-coroutines-core-jvm
-Version:	1.10.2
+Version:	1.11.0
 Release:	1
 Summary:	Kotlin coroutines core for the JVM
 Group:		Development/Java
 License:	Apache-2.0
 URL:		https://github.com/Kotlin/kotlinx.coroutines
-# kotlinx-coroutines tag 1.10.2. JVM jar is common, concurrent, and jvm sources.
+# kotlinx-coroutines tag 1.11.0. JVM jar is common, concurrent, and jvm sources.
 # The jar and sysjar index are versioned so kotlin-libs 1.6.4 can stay installed.
 Source0:	kotlinx-coroutines-core-jvm-%{version}.tar.gz
 
@@ -19,10 +19,13 @@ BuildRequires:	mvn(org.jetbrains.kotlinx:atomicfu-jvm)
 BuildRequires:	mvn(org.codehaus.mojo:animal-sniffer-annotations)
 BuildRequires:	mvn(com.google.android:annotations)
 
+# Local rpmbuild can pass --define "atomicfu_jar /path/to/new/atomicfu-jvm.jar"
+%{!?atomicfu_jar:%global atomicfu_jar %{_javadir}/atomicfu-jvm.jar}
+
 %description
 org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm %{version}.
-JVM coroutines from tag 1.10.2, compiled with the installed kotlinc 2.0.21
-against atomicfu-jvm 0.26.1.
+JVM coroutines from tag 1.11.0, compiled with the installed kotlinc 2.0.21
+against atomicfu-jvm 0.33.0.
 
 %prep
 %autosetup -n kotlinx-coroutines-core-jvm-%{version}
@@ -37,7 +40,7 @@ set -eo pipefail
 export JAVA_HOME=%{_jvmdir}/java-21-openjdk
 export PATH="$JAVA_HOME/bin:/usr/bin:/bin"
 CPSTD=%{_javadir}/kotlin-stdlib.jar
-ATOMIC=%{_javadir}/atomicfu-jvm.jar
+ATOMIC=%{atomicfu_jar}
 SNIFF=%{_javadir}/animal-sniffer-annotations.jar
 ANN=%{_javadir}/google-android-annotations.jar
 test -s "$CPSTD"
@@ -48,7 +51,7 @@ mkdir -p classes
 find src/common -name '*.kt' | sort > common.list
 printf '%s\n' src/concurrent/Builders.concurrent.kt src/concurrent/Dispatchers.kt src/concurrent/MultithreadedDispatchers.common.kt >> common.list
 find src -name '*.kt' | sort > sources.list
-test "$(wc -l < sources.list)" -eq 168
+test "$(wc -l < sources.list)" -eq 169
 test "$(wc -l < common.list)" -eq 114
 common=$(paste -sd, common.list)
 kotlinc -J-Xmx2g -jvm-target 1.8 -language-version 2.0 -no-stdlib \
@@ -93,7 +96,7 @@ cat > kotlinx-coroutines-core-jvm.pom << END
     <dependency>
       <groupId>org.jetbrains.kotlinx</groupId>
       <artifactId>atomicfu-jvm</artifactId>
-      <version>0.26.1</version>
+      <version>0.33.0</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.mojo</groupId>
@@ -113,17 +116,17 @@ END
 set -eo pipefail
 sysjar install --buildroot %{buildroot} \
 	--artifact kotlinx-coroutines-core-jvm.pom:kotlinx-coroutines-core-jvm.jar \
-	--file-name kotlinx-coroutines-core-jvm-1.10.2 \
+	--file-name kotlinx-coroutines-core-jvm-1.11.0 \
 	--filelist .mfiles
 idx="%{buildroot}/usr/share/sysjar/index/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm.sysjar"
-/bin/mv "$idx" "%{buildroot}/usr/share/sysjar/index/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm-1.10.2.sysjar"
-sed -i 's|kotlinx-coroutines-core-jvm\.sysjar|kotlinx-coroutines-core-jvm-1.10.2.sysjar|' .mfiles
-idx="%{buildroot}/usr/share/sysjar/index/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm-1.10.2.sysjar"
+/bin/mv "$idx" "%{buildroot}/usr/share/sysjar/index/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm-1.11.0.sysjar"
+sed -i 's|kotlinx-coroutines-core-jvm\.sysjar|kotlinx-coroutines-core-jvm-1.11.0.sysjar|' .mfiles
+idx="%{buildroot}/usr/share/sysjar/index/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm-1.11.0.sysjar"
 test -s "$idx"
 grep -F -q '"version": "%{version}"' "$idx"
 grep -F -q '"artifactId": "kotlinx-coroutines-core-jvm"' "$idx"
-grep -F -q '/usr/share/java/kotlinx-coroutines-core-jvm-1.10.2.jar' "$idx"
-test -s %{buildroot}%{_javadir}/kotlinx-coroutines-core-jvm-1.10.2.jar
+grep -F -q '/usr/share/java/kotlinx-coroutines-core-jvm-1.11.0.jar' "$idx"
+test -s %{buildroot}%{_javadir}/kotlinx-coroutines-core-jvm-1.11.0.jar
 if [ -e %{buildroot}%{_javadir}/kotlinx-coroutines-core-jvm.jar ]; then
 	exit 1
 fi
@@ -132,10 +135,10 @@ fi
 set -eo pipefail
 export JAVA_HOME=%{_jvmdir}/java-21-openjdk
 export PATH="$JAVA_HOME/bin:/usr/bin:/bin"
-JAR=%{buildroot}%{_javadir}/kotlinx-coroutines-core-jvm-1.10.2.jar
+JAR=%{buildroot}%{_javadir}/kotlinx-coroutines-core-jvm-1.11.0.jar
 test -s "$JAR"
 STDLIB=%{_javadir}/kotlin-stdlib.jar
-ATOMIC=%{_javadir}/atomicfu-jvm.jar
+ATOMIC=%{atomicfu_jar}
 mkdir -p check
 cat > check/Probe.kt << 'EOF'
 import kotlinx.atomicfu.atomic

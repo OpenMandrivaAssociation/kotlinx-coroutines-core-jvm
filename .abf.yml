@@ -1,2 +1,4 @@
 sources:
+  kotlinx-coroutines-core-jvm-1.11.0.tar.gz: cfcb02727fa80ec6c8fdc068762d5d68bfa8ef10
+removed_sources:
   kotlinx-coroutines-core-jvm-1.10.2.tar.gz: 2d33d498e4a1a35056603d7f23e5b5912144e3cd
