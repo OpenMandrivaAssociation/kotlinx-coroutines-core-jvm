@@ -1,12 +1,14 @@
 Name:		kotlinx-coroutines-core-jvm
 Version:	1.11.0
-Release:	1
+Release:	2
 Summary:	Kotlin coroutines core for the JVM
 Group:		Development/Java
 License:	Apache-2.0
 URL:		https://github.com/Kotlin/kotlinx.coroutines
 # kotlinx-coroutines tag 1.11.0. JVM jar is common, concurrent, and jvm sources.
 # The jar and sysjar index are versioned so kotlin-libs 1.6.4 can stay installed.
+# 1.11.0 replaced 1.10.2 in the repository. The older coordinate and jar
+# name stay available for kotlin-gradle-plugin and kotlin-compiler-embeddable.
 Source0:	kotlinx-coroutines-core-jvm-%{version}.tar.gz
 
 BuildArch:	noarch
@@ -21,6 +23,7 @@ BuildRequires:	mvn(org.jetbrains.kotlin:kotlin-stdlib)
 BuildRequires:	mvn(org.jetbrains.kotlinx:atomicfu-jvm)
 BuildRequires:	mvn(org.codehaus.mojo:animal-sniffer-annotations)
 BuildRequires:	mvn(com.google.android:annotations)
+Provides:	mvn(org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm) = 1.10.2
 
 # Local rpmbuild can pass --define "atomicfu_jar /path/to/new/atomicfu-jvm.jar"
 %{!?atomicfu_jar:%global atomicfu_jar %{_javadir}/atomicfu-jvm.jar}
@@ -130,6 +133,9 @@ grep -F -q '"version": "%{version}"' "$idx"
 grep -F -q '"artifactId": "kotlinx-coroutines-core-jvm"' "$idx"
 grep -F -q '/usr/share/java/kotlinx-coroutines-core-jvm-1.11.0.jar' "$idx"
 test -s %{buildroot}%{_javadir}/kotlinx-coroutines-core-jvm-1.11.0.jar
+ln -s kotlinx-coroutines-core-jvm-1.11.0.jar %{buildroot}%{_javadir}/kotlinx-coroutines-core-jvm-1.10.2.jar
+echo "%{_javadir}/kotlinx-coroutines-core-jvm-1.10.2.jar" >> .mfiles
+test -s %{buildroot}%{_javadir}/kotlinx-coroutines-core-jvm-1.10.2.jar
 if [ -e %{buildroot}%{_javadir}/kotlinx-coroutines-core-jvm.jar ]; then
 	exit 1
 fi
