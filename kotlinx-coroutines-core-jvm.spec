@@ -1,6 +1,6 @@
 Name:		kotlinx-coroutines-core-jvm
 Version:	1.11.0
-Release:	2
+Release:	3
 Summary:	Kotlin coroutines core for the JVM
 Group:		Development/Java
 License:	Apache-2.0
